@@ -34,7 +34,7 @@ pip install -r requirements-dev.txt  # Pour le développement
 
 4. **Configuration**
 ```bash
-cp .env.example .env
+cp .env .env
 # Éditer .env avec vos credentials
 ```
 

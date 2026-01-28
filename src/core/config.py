@@ -1,4 +1,6 @@
 """Configuration centralisée de l'application."""
+from typing import List
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -74,6 +76,18 @@ class Settings(BaseSettings):
     brevo_api_key: str = Field(..., alias="BREVO_API_KEY")
     brevo_sender_email: str = Field(..., alias="BREVO_SENDER_EMAIL")
     brevo_sender_name: str = Field(default="HEYI", alias="BREVO_SENDER_NAME")
+
+    # Mode démo
+    demo_mode: bool = Field(default=False, alias="DEMO_MODE")
+    demo_notification_emails: str = Field(default="", alias="DEMO_NOTIFICATION_EMAILS")
+    demo_notification_whatsapp: str = Field(default="", alias="DEMO_NOTIFICATION_WHATSAPP")
+
+    @property
+    def demo_emails_list(self) -> List[str]:
+        '''Parser les emails de notification démo.'''
+        if not self.demo_notification_emails:
+            return []
+        return [email.strip() for email in self.demo_notification_emails.split(",")]
 
 
 settings = Settings()

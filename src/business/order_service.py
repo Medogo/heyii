@@ -7,7 +7,9 @@ from src.data.repositories.order_repository import OrderRepository
 from src.data.repositories.product_repository import ProductRepository
 from src.data.models import Order, OrderItem
 from src.business.product_service import ProductService
+from src.business.pharmacy_service import PharmacyService
 from src.integrations.erp.client import ERPClient
+from src.core.config import settings
 
 
 class OrderService:
@@ -17,6 +19,7 @@ class OrderService:
         self.db = db
         self.repository = OrderRepository(db)
         self.product_service = ProductService(db)
+        self.pharmacy_service = PharmacyService(db)
         self.erp_client = ERPClient()
 
     async def create_order(
@@ -29,6 +32,56 @@ class OrderService:
     ) -> Order:
         """Créer une nouvelle commande."""
 
+        # MODE DÉMO: Utiliser le service démo au lieu de l'ERP réel
+        if settings.demo_mode:
+            from src.demo.demo_order_service import DemoOrderService
+
+            # Récupérer le nom de la pharmacie depuis la base de données
+            pharmacy = await self.pharmacy_service.get_by_pharmacy_id(pharmacy_id)
+            pharmacy_name = pharmacy.name if pharmacy else f"Pharmacie {pharmacy_id}"
+
+            demo_service = DemoOrderService(
+                notification_emails=settings.demo_emails_list,
+                notification_whatsapp=settings.demo_notification_whatsapp,
+            )
+
+            # Le service démo retourne un dict, on doit créer l'objet Order pour compatibilité
+            demo_result = await demo_service.create_order(
+                call_id=call_id,
+                pharmacy_id=pharmacy_id,
+                pharmacy_name=pharmacy_name,
+                items=items,
+                confidence=confidence,
+            )
+
+            # Créer quand même l'ordre en base pour traçabilité (mais marqué comme démo)
+            order_id = demo_result.get("order_id", self._generate_order_id())
+            
+            # Calculer le total pour la commande en base
+            total_amount = demo_result.get("total_amount", 0.0)
+            
+            # Créer la commande en base avec le statut démo
+            order = Order(
+                order_id=order_id,
+                call_id=call_id,
+                pharmacy_id=pharmacy_id,
+                status="demo",
+                total_amount=total_amount,
+                delivery_notes=delivery_notes or "Mode DÉMO - Commande simulée",
+                required_human_review=False,
+                confidence_global=confidence,
+                erp_created=True,  # Marqué comme créé car le mock ERP l'a fait
+                erp_order_id=demo_result.get("erp_response", {}).get("order_id"),
+            )
+
+            created_order = await self.repository.create(order)
+            await self.db.commit()
+            await self.db.refresh(created_order)
+
+            print(f"✅ Commande DÉMO créée: {order_id} (Total: {total_amount:.2f}€)")
+            return created_order
+
+        # MODE PRODUCTION: Code existant...
         # Générer l'ID de commande
         order_id = self._generate_order_id()
 
