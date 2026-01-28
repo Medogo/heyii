@@ -1,0 +1,33 @@
+
+# ========================================
+# infrastructure/kubernetes/base/ingress.yaml
+# ========================================
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: heyi-ingress
+  namespace: heyi
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    nginx.ingress.kubernetes.io/websocket-services: heyi-api-service
+spec:
+  tls:
+  - hosts:
+    - api.heyi.com
+    secretName: heyi-tls
+  rules:
+  - host: api.heyi.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: heyi-api-service
+            port:
+              number: 80

@@ -11,7 +11,7 @@ from src.agent.call_manager import call_manager
 from src.services.stt.deepgram_client import DeepgramSTTClient
 from src.services.llm.openai_client import OpenAIClient
 from src.services.tts.elevenlabs_client import ElevenLabsTTSClient
-from src.services.vector_db.qdrant_client import qdrant_client
+from src.services.vector_db.qcadrant_client import qdrant_client
 from src.business.product_service import ProductService
 from src.business.order_service import OrderService
 from src.data.repositories.call_repository import CallRepository

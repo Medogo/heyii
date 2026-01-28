@@ -9,7 +9,7 @@ from src.agent.session import session_manager
 from src.services.stt.deepgram_client import DeepgramSTTClient
 from src.services.llm.openai_client import OpenAIClient
 from src.services.tts.elevenlabs_client import ElevenLabsTTSClient
-from src.services.vector_db.qdrant_client import QdrantClient
+from src.services.vector_db.qcadrant_client import QdrantClient
 from src.business.product_service import ProductService
 from src.business.order_service import OrderService
 

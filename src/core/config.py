@@ -70,5 +70,10 @@ class Settings(BaseSettings):
     audio_buffer_size: int = 320
     vad_aggressiveness: int = 2
 
+    # Brevo Email
+    brevo_api_key: str = Field(..., alias="BREVO_API_KEY")
+    brevo_sender_email: str = Field(..., alias="BREVO_SENDER_EMAIL")
+    brevo_sender_name: str = Field(default="HEYI", alias="BREVO_SENDER_NAME")
+
 
 settings = Settings()

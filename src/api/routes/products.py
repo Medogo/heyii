@@ -12,7 +12,7 @@ from src.api.schemas.product import (
     StockCheckRequest,
     StockCheckResponse
 )
-from src.services.vector_db.qdrant_client import qdrant_client
+from src.services.vector_db.qcadrant_client import qdrant_client
 from src.business.product_service import ProductService
 
 router = APIRouter(prefix="/products", tags=["Products"])

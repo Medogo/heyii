@@ -1,0 +1,10 @@
+# ========================================
+# infrastructure/kubernetes/base/namespace.yaml
+# ========================================
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: heyi
+  labels:
+    name: heyi
+    app: heyi

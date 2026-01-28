@@ -1,0 +1,21 @@
+
+# infrastructure/kubernetes/base/service.yaml
+# ========================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: heyi-api-service
+  namespace: heyi
+  labels:
+    app: heyi
+    component: api
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8000
+    protocol: TCP
+    name: http
+  selector:
+    app: heyi
+    component: api

@@ -1,0 +1,20 @@
+
+# ========================================
+# infrastructure/kubernetes/overlays/production/resources-patch.yaml
+# ========================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: heyi-api
+spec:
+  template:
+    spec:
+      containers:
+      - name: heyi-api
+        resources:
+          requests:
+            memory: "4Gi"
+            cpu: "2000m"
+          limits:
+            memory: "8Gi"
+            cpu: "4000m"

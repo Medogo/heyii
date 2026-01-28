@@ -1,0 +1,89 @@
+
+# ========================================
+# infrastructure/kubernetes/base/deployment.yaml
+# ========================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: heyi-api
+  namespace: heyi
+  labels:
+    app: heyi
+    component: api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: heyi
+      component: api
+  template:
+    metadata:
+      labels:
+        app: heyi
+        component: api
+    spec:
+      containers:
+      - name: heyi-api
+        image: heyi/api:latest
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 8000
+          protocol: TCP
+
+        envFrom:
+        - configMapRef:
+            name: heyi-config
+        - secretRef:
+            name: heyi-secrets
+
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: http
+          initialDelaySeconds: 15
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+
+        volumeMounts:
+        - name: logs
+          mountPath: /app/logs
+
+      volumes:
+      - name: logs
+        emptyDir: {}
+
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - heyi
+                - key: component
+                  operator: In
+                  values:
+                  - api
+              topologyKey: kubernetes.io/hostname
