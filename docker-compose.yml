@@ -1,68 +1,113 @@
 services:
-  app:
-    build: .
-    ports:
-      - "8000:8000"
-    environment:
-      - DATABASE_URL=postgresql+asyncpg://heyi:heyi123@postgres:5432/heyi_db
-      - REDIS_URL=redis://redis:6379/0
-      - QDRANT_HOST=qdrant
-    depends_on:
-      - postgres
-      - redis
-      - qdrant
-    volumes:
-      - ./src:/app/src
-      - ./logs:/app/logs
-    restart: unless-stopped
-
   postgres:
     image: postgres:15-alpine
+    container_name: heyi-postgres
     environment:
       POSTGRES_USER: heyi
-      POSTGRES_PASSWORD: heyi123
+      POSTGRES_PASSWORD: heyi_password
       POSTGRES_DB: heyi_db
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U heyi"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - heyi-network
 
   redis:
     image: redis:7-alpine
+    container_name: heyi-redis
     ports:
       - "6379:6379"
     volumes:
       - redis_data:/data
-    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - heyi-network
 
   qdrant:
-    image: qdrant/qdrant:latest
+    image: qdrant/qdrant:v1.7.4
+    container_name: heyi-qdrant
     ports:
       - "6333:6333"
       - "6334:6334"
     volumes:
       - qdrant_data:/qdrant/storage
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - heyi-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: heyi-app
+    ports:
+      - "8000:8000"
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+      - 1.1.1.1
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://heyi:heyi_password@postgres:5432/heyi_db
+      - REDIS_URL=redis://redis:6379/0
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+    volumes:
+      - ./logs:/app/logs
+      - ./recordings:/app/recordings
+    networks:
+      - heyi-network
     restart: unless-stopped
 
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v2.48.0
+    container_name: heyi-prometheus
     ports:
       - "9090:9090"
     volumes:
-      - ./infrastructure/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
-    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    networks:
+      - heyi-network
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:10.2.2
+    container_name: heyi-grafana
     ports:
       - "3000:3000"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     volumes:
       - grafana_data:/var/lib/grafana
-    restart: unless-stopped
+    depends_on:
+      - prometheus
+    networks:
+      - heyi-network
 
 volumes:
   postgres_data:
@@ -70,3 +115,7 @@ volumes:
   qdrant_data:
   prometheus_data:
   grafana_data:
+
+networks:
+  heyi-network:
+    driver: bridge

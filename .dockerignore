@@ -1,0 +1,71 @@
+# Environnements virtuels Python
+venv/
+env/
+ENV/
+cx/
+.venv/
+
+# Fichiers Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Tests
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+*.log
+
+# Documentation (optionnel, peut être inclus si nécessaire)
+# docs/
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Environnement
+.env
+.env.local
+.env.*.local
+
+# Node modules (si présent)
+node_modules/
+npm-debug.log*
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# Kubernetes
+*.kubeconfig
+
+# Autres
+.DS_Store
+*.pyc
+*.pyo
+*.pyd
+.cache/

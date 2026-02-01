@@ -43,7 +43,7 @@ clean:
 	rm -rf build
 
 docker-up:
-	docker-compose up -d
+	docker compose up -d
 
 docker-down:
-	docker-compose down
+	docker compose down

@@ -1,0 +1,21 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'heyi-monitor'
+
+# Configuration de scraping
+scrape_configs:
+  # Scraper l'application HEYI
+  - job_name: 'heyi-api'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['app:8000']
+        labels:
+          service: 'heyi-api'
+          environment: 'development'
+
+  # Scraper Prometheus lui-même
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
