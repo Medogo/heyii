@@ -2,8 +2,8 @@
 # ========================================
 # src/integrations/notifications/sms.py
 # ========================================
-"""Service d'envoi de SMS via Twilio."""
-from twilio.rest import Client
+"""Service d'envoi de SMS."""
+# Twilio removed - implement alternative SMS service if needed
 
 
 class SMSService:
@@ -14,12 +14,13 @@ class SMSService:
         Initialiser le service SMS.
 
         Args:
-            account_sid: Twilio Account SID
-            auth_token: Twilio Auth Token
+            account_sid: Account SID (deprecated - Twilio removed)
+            auth_token: Auth Token (deprecated - Twilio removed)
             from_number: Numéro d'envoi
         """
-        self.client = Client(account_sid, auth_token)
+        # Twilio removed - implement alternative service
         self.from_number = from_number
+        print("⚠️  SMS Service: Twilio removed, implement alternative service")
 
     async def send_sms(self, to: str, body: str) -> bool:
         """
@@ -32,17 +33,9 @@ class SMSService:
         Returns:
             True si envoyé
         """
-        try:
-            message = self.client.messages.create(
-                from_=self.from_number, to=to, body=body
-            )
-
-            print(f"✅ SMS envoyé: {message.sid}")
-            return True
-
-        except Exception as e:
-            print(f"❌ Erreur envoi SMS: {e}")
-            return False
+        # Twilio removed - implement alternative service
+        print(f"⚠️  SMS not sent (Twilio removed): {to}")
+        return False
 
     async def send_order_confirmation(
             self, to: str, order_id: str, total_amount: float

@@ -5,7 +5,7 @@
 """Gestionnaire de notifications pour le mode démo."""
 from typing import List, Dict, Any
 from src.integrations.notifications.brevo_email import BrevoEmailService
-from src.services.telephony.twilio_client import TwilioClient
+# Twilio removed - using alternative notification methods
 from src.core.config import settings
 
 
@@ -21,8 +21,7 @@ class DemoNotificationHandler:
             sender_name=settings.brevo_sender_name,
         )
 
-        # WhatsApp/SMS via Twilio
-        self.twilio_client = TwilioClient()
+        # WhatsApp/SMS - Twilio removed, using alternative methods
 
     async def send_order_notification(
             self,
@@ -73,29 +72,10 @@ class DemoNotificationHandler:
         # WHATSAPP
         if via_whatsapp and whatsapp_to:
             try:
-                # WhatsApp via Twilio
-                message_body = f"""
-🛒 *Nouvelle Commande HEYI* (MODE DÉMO)
-
-📋 Commande: {order_id}
-🏥 Pharmacie: {pharmacy_name}
-💰 Montant: {total_amount:.2f} €
-
-📦 Articles:
-{items_text}
-
-✅ Commande reçue via l'agent IA vocal
-                """.strip()
-
-                # Format WhatsApp Twilio: whatsapp:+xxxxxx
-                whatsapp_number = f"whatsapp:{whatsapp_to}"
-
-                result = self.twilio_client.send_sms(
-                    to=whatsapp_number,
-                    body=message_body,
-                )
-
-                results["whatsapp"] = result is not None
+                # WhatsApp - Twilio removed, using alternative notification service
+                # TODO: Implement alternative WhatsApp service
+                print(f"⚠️  WhatsApp notification not implemented (Twilio removed)")
+                results["whatsapp"] = False
 
             except Exception as e:
                 print(f"❌ Erreur envoi WhatsApp: {e}")

@@ -83,12 +83,34 @@ pytest tests/integration -v
 pytest --cov=src --cov-report=html
 ```
 
-## 📊 Monitoring
+## 📊 Services & URLs
 
-- **API**: http://localhost:8000
-- **Docs API**: http://localhost:8000/docs
+### Application
+- **API principale**: http://localhost:8000
+- **Documentation API (Swagger)**: http://localhost:8000/docs
+- **Documentation API (ReDoc)**: http://localhost:8000/redoc
+- **Health Check**: http://localhost:8000/health/
+- **Readiness Check**: http://localhost:8000/health/ready
+- **Métriques**: http://localhost:8000/health/metrics
+
+### Monitoring & Observabilité
+- **Grafana**: http://localhost:3000
+  - Utilisateur: `admin`
+  - Mot de passe: `admin`
 - **Prometheus**: http://localhost:9090
-- **Grafana**: http://localhost:3000 (admin/admin)
+  - Interface de requêtes: http://localhost:9090/graph
+  - Métriques: http://localhost:9090/metrics
+
+### Bases de données & Services
+- **PostgreSQL**: `localhost:5432`
+  - Base de données: `heyi_db`
+  - Utilisateur: `heyi`
+  - Mot de passe: `heyi_password`
+- **Redis**: `localhost:6379`
+- **Qdrant (Vector DB)**:
+  - Dashboard: http://localhost:6333/dashboard
+  - API REST: http://localhost:6333
+  - gRPC: `localhost:6334`
 
 ## 🔧 Développement
 

@@ -1,5 +1,5 @@
 """Service téléphonie."""
-from src.services.telephony.twilio_client import TwilioClient, twilio_client
-from src.services.telephony.websocket_handler import TwilioWebSocketHandler
+# Les services de téléphonie sont gérés par Telnyx
+# Les imports Twilio ont été supprimés
 
-__all__ = ["TwilioClient", "twilio_client", "TwilioWebSocketHandler"]
+__all__ = []

@@ -42,7 +42,7 @@ torchaudio==2.5.1+cpu
 sentence-transformers==2.7.0
 
 # Telephony
-twilio==9.3.7
+# Twilio removed - using Telnyx instead
 
 # Audio Processing
 numpy==2.1.3

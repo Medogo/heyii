@@ -11,7 +11,7 @@ Documentation complète du projet HEYI - Agent IA de Prise de Commande Pharmaceu
 
 ### API
 - [Documentation API REST](./api/rest-api.md) - Endpoints REST
-- [Documentation WebSocket](./api/websocket-api.md) - API WebSocket pour Twilio
+- [Documentation WebSocket](./api/websocket-api.md) - API WebSocket pour les appels vocaux
 - [Schémas de données](./api/schemas.md) - Modèles Pydantic
 
 ### Modules

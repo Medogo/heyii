@@ -28,3 +28,4 @@ mkdocs-material==9.5.49
 ipython==8.30.0
 ipdb==0.13.13
 pre-commit==4.0.1
+telnyx==2.0.0

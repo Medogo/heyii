@@ -19,7 +19,7 @@ Index complet de toute la documentation HEYI.
 ### API
 
 - [API REST](./api/rest-api.md) - Documentation complète de l'API REST
-- [API WebSocket](./api/websocket-api.md) - Documentation WebSocket Twilio
+- [API WebSocket](./api/websocket-api.md) - Documentation WebSocket pour les appels vocaux
 - [Schémas de Données](./api/schemas.md) - Modèles Pydantic
 
 ### Modules

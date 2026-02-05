@@ -9,7 +9,7 @@ Le module Services est organisé en sous-modules :
 - **LLM** : Large Language Model (OpenAI)
 - **TTS** : Text-to-Speech (ElevenLabs)
 - **Vector DB** : Base de données vectorielle (Qdrant)
-- **Telephony** : Téléphonie (Twilio)
+- **Telephony** : Téléphonie (Telnyx)
 
 ## STT (Speech-to-Text)
 
@@ -136,7 +136,7 @@ from src.services.tts.elevenlabs_client import ElevenLabsTTSClient
 tts_client = ElevenLabsTTSClient()
 
 async for audio_chunk in tts_client.text_to_speech_stream("Bonjour"):
-    # Envoyer audio_chunk à Twilio
+    # Envoyer audio_chunk
     pass
 ```
 
@@ -235,48 +235,7 @@ Réindexe tous les produits.
 
 ## Telephony
 
-### TwilioClient
-
-**Fichier** : `src/services/telephony/twilio_client.py`
-
-**Responsabilité** : Gestion des appels Twilio
-
-#### Méthodes principales
-
-##### `create_call(to: str, from_: str = None, url: str = None) -> Dict`
-Crée un appel sortant.
-
-##### `get_call_status(call_sid: str) -> str`
-Récupère le statut d'un appel.
-
-##### `end_call(call_sid: str) -> bool`
-Termine un appel.
-
-##### `generate_twiml_connect_stream(websocket_url: str) -> str`
-Génère TwiML pour connecter à un WebSocket.
-
-##### `send_sms(to: str, body: str) -> Dict`
-Envoie un SMS.
-
-### TwilioWebSocketHandler
-
-**Fichier** : `src/services/telephony/websocket_handler.py`
-
-**Responsabilité** : Handler WebSocket pour Twilio Media Streams
-
-#### Méthodes principales
-
-##### `handle_connection()`
-Gère la connexion WebSocket.
-
-##### `handle_start(data: dict)`
-Gère l'événement START.
-
-##### `handle_media(data: dict)`
-Gère les chunks audio.
-
-##### `send_audio(audio_data: bytes)`
-Envoie de l'audio vers Twilio.
+Les services de téléphonie utilisent Telnyx. Les références à Twilio ont été supprimées.
 
 ## Configuration
 
@@ -303,10 +262,10 @@ qdrant_host: str = "localhost"
 qdrant_port: int = 6333
 qdrant_collection: str = "products"
 
-# Twilio
-twilio_account_sid: str
-twilio_auth_token: str
-twilio_phone_number: str
+# Telnyx (remplace Twilio)
+telnyx_api_key: str
+telnyx_phone_number: str
+telnyx_connection_id: str
 ```
 
 ## Gestion des erreurs

@@ -1,6 +1,6 @@
 """Repository pour les commandes."""
 from datetime import datetime
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -108,6 +108,50 @@ class OrderRepository(BaseRepository[Order]):
         await self.session.commit()
         await self.session.refresh(order)
         return order
+
+    async def get_stats(self):
+        """Calculer les statistiques des commandes."""
+        # Total des commandes
+        total_result = await self.session.execute(select(func.count(Order.id)))
+        total_orders = total_result.scalar() or 0
+
+        # Commandes en attente
+        pending_result = await self.session.execute(
+            select(func.count(Order.id)).where(Order.status == "pending")
+        )
+        pending_orders = pending_result.scalar() or 0
+
+        # Commandes complétées
+        completed_result = await self.session.execute(
+            select(func.count(Order.id)).where(Order.status == "confirmed")
+        )
+        completed_orders = completed_result.scalar() or 0
+
+        # Montant total
+        total_amount_result = await self.session.execute(
+            select(func.sum(Order.total_amount))
+        )
+        total_amount = total_amount_result.scalar() or 0.0
+        if total_amount:
+            total_amount = float(total_amount)
+
+        # Nombre moyen d'items par commande
+        # On compte le nombre total d'items et on divise par le nombre de commandes
+        items_count_result = await self.session.execute(
+            select(func.count(OrderItem.id))
+        )
+        total_items = items_count_result.scalar() or 0
+        average_items_per_order = (
+            float(total_items) / total_orders if total_orders > 0 else 0.0
+        )
+
+        return {
+            "total_orders": total_orders,
+            "pending_orders": pending_orders,
+            "completed_orders": completed_orders,
+            "total_amount": total_amount,
+            "average_items_per_order": average_items_per_order,
+        }
 
 
 class OrderItemRepository(BaseRepository[OrderItem]):

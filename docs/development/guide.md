@@ -62,10 +62,10 @@ OPENAI_API_KEY=your_key
 ELEVENLABS_API_KEY=your_key
 ELEVENLABS_VOICE_ID=your_voice_id
 
-# Twilio
-TWILIO_ACCOUNT_SID=your_sid
-TWILIO_AUTH_TOKEN=your_token
-TWILIO_PHONE_NUMBER=your_number
+# Telnyx (remplace Twilio)
+TELNYX_API_KEY=your_key
+TELNYX_PHONE_NUMBER=your_number
+TELNYX_CONNECTION_ID=your_connection_id
 
 # Qdrant
 QDRANT_HOST=localhost

@@ -80,8 +80,8 @@ src/
   - `POST /products/` : Créer un produit
   - `POST /products/check-stock` : Vérifier le stock
 
-- **`websocket.py`** : WebSocket pour Twilio Media Streams
-  - `WS /ws/twilio/{call_id}` : Connexion WebSocket
+- **`websocket.py`** : WebSocket pour les appels vocaux
+  - `WS /ws/voice` : Connexion WebSocket
 
 ### Middleware (`src/api/middleware/`)
 
@@ -303,12 +303,8 @@ src/
 
 ### Telephony (`src/services/telephony/`)
 
-- **`twilio_client.py`** : Client Twilio
-  - `TwilioClient` : Client Twilio
-  - `twilio_client` : Instance globale
-
-- **`websocket_handler.py`** : Handler WebSocket
-  - `TwilioWebSocketHandler` : Handler WebSocket Twilio
+- **Services de téléphonie** : Utilisation de Telnyx (Twilio supprimé)
+  - Les services de téléphonie sont gérés par Telnyx
 
 ## Module Utils (`src/utils/`)
 

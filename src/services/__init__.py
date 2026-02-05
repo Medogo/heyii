@@ -17,7 +17,7 @@ from src.services.vector_db import (
     ProductIndexer,
     product_indexer,
 )
-from src.services.telephony import TwilioClient, twilio_client, TwilioWebSocketHandler
+# Telephony services removed (Twilio)
 
 __all__ = [
     # LLM
@@ -42,8 +42,5 @@ __all__ = [
     "embedding_generator",
     "ProductIndexer",
     "product_indexer",
-    # Telephony
-    "TwilioClient",
-    "twilio_client",
-    "TwilioWebSocketHandler",
+    # Telephony - removed (Twilio)
 ]

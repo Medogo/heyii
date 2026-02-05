@@ -190,9 +190,9 @@ kubectl create secret generic heyi-secrets \
   --from-literal=OPENAI_API_KEY="your_key" \
   --from-literal=ELEVENLABS_API_KEY="your_key" \
   --from-literal=ELEVENLABS_VOICE_ID="your_voice_id" \
-  --from-literal=TWILIO_ACCOUNT_SID="your_sid" \
-  --from-literal=TWILIO_AUTH_TOKEN="your_token" \
-  --from-literal=TWILIO_PHONE_NUMBER="+1234567890" \
+  --from-literal=TELNYX_API_KEY="your_key" \
+  --from-literal=TELNYX_PHONE_NUMBER="+1234567890" \
+  --from-literal=TELNYX_CONNECTION_ID="your_connection_id" \
   --from-literal=BREVO_API_KEY="your_key" \
   --from-literal=BREVO_SENDER_EMAIL="noreply@heyi.com" \
   --from-literal=ERP_API_URL="https://erp.example.com/api" \

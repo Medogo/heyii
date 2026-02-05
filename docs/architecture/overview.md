@@ -48,7 +48,7 @@ HEYI est un agent IA vocal conversationnel pour automatiser la prise de commande
 ┌─────────────────────────────────────────────────────────┐
 │                    Infrastructure Layer                  │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌─────────┐│
-│  │PostgreSQL│  │  Redis   │  │  Qdrant  │  │ Twilio  ││
+│  │PostgreSQL│  │  Redis   │  │  Qdrant  │  │ Telnyx  ││
 │  └──────────┘  └──────────┘  └──────────┘  └─────────┘│
 └─────────────────────────────────────────────────────────┘
 ```
@@ -60,7 +60,7 @@ HEYI est un agent IA vocal conversationnel pour automatiser la prise de commande
 **Responsabilité** : Point d'entrée HTTP/WebSocket de l'application
 
 - **REST API** : Endpoints pour la gestion des appels, commandes, produits
-- **WebSocket** : Gestion des streams audio Twilio Media Streams
+- **WebSocket** : Gestion des streams audio des appels vocaux
 - **Middleware** : Auth, logging, rate limiting, error handling
 - **Schemas** : Validation des données avec Pydantic
 
@@ -127,15 +127,13 @@ HEYI est un agent IA vocal conversationnel pour automatiser la prise de commande
 - **ProductIndexer** : Indexation des produits
 
 #### Telephony
-- **TwilioClient** : Gestion des appels Twilio
-- **TwilioWebSocketHandler** : Handler WebSocket pour Media Streams
+- **Services de téléphonie** : Utilisation de Telnyx (Twilio supprimé)
 
 **Fichiers clés** :
 - `src/services/stt/deepgram_client.py`
 - `src/services/llm/openai_client.py`
 - `src/services/tts/elevenlabs_client.py`
 - `src/services/vector_db/qcadrant_client.py`
-- `src/services/telephony/twilio_client.py`
 
 ### 5. Audio Processing Layer (`src/audio/`)
 
@@ -214,7 +212,7 @@ HEYI est un agent IA vocal conversationnel pour automatiser la prise de commande
 ### Flux d'un appel entrant
 
 ```
-1. Twilio → WebSocket (Media Streams)
+1. Appel entrant → WebSocket
    ↓
 2. AudioStreamProcessor → Traitement audio
    ↓
@@ -232,7 +230,7 @@ HEYI est un agent IA vocal conversationnel pour automatiser la prise de commande
    ↓
 9. ElevenLabsTTSClient → Synthèse vocale
    ↓
-10. WebSocket → Twilio → Pharmacien
+10. WebSocket → Pharmacien
 ```
 
 ### Flux de création de commande
@@ -266,7 +264,7 @@ HEYI est un agent IA vocal conversationnel pour automatiser la prise de commande
 - **OpenAI** : LLM (GPT-4)
 - **ElevenLabs** : Text-to-Speech
 - **Qdrant** : Vector Database
-- **Twilio** : Téléphonie
+- **Telnyx** : Téléphonie
 - **Brevo** : Emails
 
 ### Infrastructure

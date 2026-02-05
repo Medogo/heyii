@@ -1,6 +1,6 @@
 """Repository pour les appels."""
 from datetime import datetime
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -84,3 +84,55 @@ class CallRepository(BaseRepository[Call]):
         await self.session.commit()
         await self.session.refresh(call)
         return call
+
+    async def get_stats(self):
+        """Calculer les statistiques des appels."""
+        # Total des appels
+        total_result = await self.session.execute(select(func.count(Call.id)))
+        total_calls = total_result.scalar() or 0
+
+        # Appels actifs (ringing ou active)
+        active_result = await self.session.execute(
+            select(func.count(Call.id)).where(Call.status.in_(["ringing", "active"]))
+        )
+        active_calls = active_result.scalar() or 0
+
+        # Appels complétés
+        completed_result = await self.session.execute(
+            select(func.count(Call.id)).where(Call.status == "completed")
+        )
+        completed_calls = completed_result.scalar() or 0
+
+        # Appels échoués
+        failed_result = await self.session.execute(
+            select(func.count(Call.id)).where(Call.status == "failed")
+        )
+        failed_calls = failed_result.scalar() or 0
+
+        # Durée moyenne (seulement pour les appels complétés avec durée)
+        avg_duration_result = await self.session.execute(
+            select(func.avg(Call.duration_seconds))
+            .where(Call.status == "completed")
+            .where(Call.duration_seconds.isnot(None))
+        )
+        average_duration = avg_duration_result.scalar() or 0.0
+        if average_duration:
+            average_duration = float(average_duration)
+
+        # Confiance moyenne (seulement pour les appels avec confiance)
+        avg_confidence_result = await self.session.execute(
+            select(func.avg(Call.confidence_global))
+            .where(Call.confidence_global.isnot(None))
+        )
+        average_confidence = avg_confidence_result.scalar() or 0.0
+        if average_confidence:
+            average_confidence = float(average_confidence)
+
+        return {
+            "total_calls": total_calls,
+            "active_calls": active_calls,
+            "completed_calls": completed_calls,
+            "failed_calls": failed_calls,
+            "average_duration": average_duration,
+            "average_confidence": average_confidence,
+        }

@@ -143,7 +143,7 @@ file_path = recorder.stop_recording()
 #### Formats supportés
 
 - **PCM** : Format non compressé
-- **mu-law** : Format compressé (Twilio)
+- **mu-law** : Format compressé audio
 - **Base64** : Encodage pour transmission
 
 #### Méthodes principales
@@ -167,11 +167,11 @@ from src.audio.format_converter import AudioFormatConverter
 
 converter = AudioFormatConverter()
 
-# Twilio → PCM
-mulaw_audio = converter.decode_base64_audio(twilio_payload)
+# Base64 mu-law → PCM
+mulaw_audio = converter.decode_base64_audio(audio_payload)
 pcm_audio = converter.mulaw_to_pcm(mulaw_audio)
 
-# PCM → Twilio
+# PCM → Base64 mu-law
 mulaw_audio = converter.pcm_to_mulaw(pcm_audio)
 base64_audio = converter.encode_base64_audio(mulaw_audio)
 ```
@@ -179,7 +179,7 @@ base64_audio = converter.encode_base64_audio(mulaw_audio)
 ## Flux de traitement audio
 
 ```
-Twilio Media Stream (mu-law base64)
+Stream audio (mu-law base64)
     ↓
 AudioFormatConverter.decode_base64_audio()
     ↓
@@ -207,7 +207,7 @@ vad_aggressiveness: int = 2          # Agressivité VAD
 
 - **Traitement asynchrone** : Tous les traitements sont async
 - **Buffer optimisé** : Buffer de taille configurable
-- **Format efficace** : Utilisation de mu-law pour Twilio
+- **Format efficace** : Utilisation de mu-law pour la compression audio
 
 ## Tests
 

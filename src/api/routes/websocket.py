@@ -1,4 +1,4 @@
-"""WebSocket pour Twilio Media Streams."""
+"""WebSocket pour la gestion des appels vocaux."""
 import json
 import base64
 import asyncio
@@ -20,8 +20,8 @@ from src.data.repositories.call_repository import CallRepository
 router = APIRouter(tags=["WebSocket"])
 
 
-class TwilioWebSocketHandler:
-    """Gestionnaire WebSocket pour Twilio."""
+class VoiceWebSocketHandler:
+    """Gestionnaire WebSocket pour les appels vocaux."""
 
     def __init__(self, websocket: WebSocket, db: AsyncSession):
         self.websocket = websocket
@@ -49,7 +49,7 @@ class TwilioWebSocketHandler:
         )
 
     async def handle_start(self, data: dict):
-        """Gérer l'événement START de Twilio."""
+        """Gérer l'événement START de l'appel."""
         stream = data.get("start", {})
         self.stream_sid = stream.get("streamSid")
         self.call_id = stream.get("callSid")
@@ -84,7 +84,7 @@ class TwilioWebSocketHandler:
             )
 
             if response_text and is_final:
-                # Envoyer la réponse TTS vers Twilio
+                # Envoyer la réponse TTS
                 await self.send_tts_response(response_text)
 
         await self.stt_client.start_streaming(on_transcript)
@@ -120,7 +120,7 @@ class TwilioWebSocketHandler:
         await self.stt_client.close()
 
     async def send_tts_response(self, text: str):
-        """Envoyer une réponse TTS vers Twilio."""
+        """Envoyer une réponse TTS."""
         print(f"🔊 TTS: {text}")
 
         # Générer l'audio avec ElevenLabs
@@ -131,10 +131,10 @@ class TwilioWebSocketHandler:
         # Combiner les chunks
         full_audio = b"".join(audio_chunks)
 
-        # Encoder en base64 mulaw pour Twilio
+        # Encoder en base64
         audio_base64 = base64.b64encode(full_audio).decode("utf-8")
 
-        # Envoyer vers Twilio
+        # Envoyer l'audio
         message = {
             "event": "media",
             "streamSid": self.stream_sid,
@@ -151,16 +151,16 @@ async def websocket_voice_endpoint(
     websocket: WebSocket,
     db: AsyncSession = Depends(get_db)
 ):
-    """Endpoint WebSocket pour Twilio Voice."""
+    """Endpoint WebSocket pour les appels vocaux."""
 
     await websocket.accept()
     print("✅ WebSocket connecté")
 
-    handler = TwilioWebSocketHandler(websocket, db)
+    handler = VoiceWebSocketHandler(websocket, db)
 
     try:
         while True:
-            # Recevoir message de Twilio
+            # Recevoir message
             message = await websocket.receive_text()
             data = json.loads(message)
 

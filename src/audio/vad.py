@@ -18,7 +18,7 @@ class VAD:
             aggressiveness: Niveau d'agressivité (0-3)
         """
         self.vad = webrtcvad.Vad(aggressiveness)
-        self.sample_rate = 8000  # Twilio utilise 8kHz
+        self.sample_rate = 8000  # Standard téléphonie (8kHz)
         self.frame_duration = 20  # ms
 
     def is_speech(self, audio_chunk: bytes) -> bool:

@@ -1,23 +1,23 @@
-# 🔌 WebSocket API - Twilio Media Streams
+# 🔌 WebSocket API - Appels Vocaux
 
-Documentation de l'API WebSocket pour la gestion des streams audio Twilio.
+Documentation de l'API WebSocket pour la gestion des streams audio des appels vocaux.
 
 ## Connexion
 
 ### Endpoint WebSocket
 
 ```
-ws://localhost:8000/ws/twilio/{call_id}
+ws://localhost:8000/ws/voice
 ```
 
 **Paramètres** :
-- `call_id` (string) : ID de l'appel
+- Aucun paramètre dans l'URL (l'ID d'appel est transmis dans les messages)
 
-## Protocole Twilio Media Streams
+## Protocole WebSocket
 
-Twilio Media Streams utilise un protocole basé sur JSON pour échanger des messages.
+Le protocole utilise des messages JSON pour échanger des données.
 
-### Messages entrants (Twilio → Serveur)
+### Messages entrants (Client → Serveur)
 
 #### START
 Message envoyé au début du stream.
@@ -26,10 +26,11 @@ Message envoyé au début du stream.
 {
   "event": "start",
   "start": {
-    "accountSid": "AC...",
     "callSid": "CA...",
     "streamSid": "MZ...",
-    "tracks": ["inbound", "outbound"]
+    "customParameters": {
+      "From": "+1234567890"
+    }
   }
 }
 ```
@@ -41,9 +42,6 @@ Chunk audio (mu-law base64).
 {
   "event": "media",
   "media": {
-    "track": "inbound",
-    "chunk": "1",
-    "timestamp": "1234567890",
     "payload": "base64_encoded_audio"
   }
 }
@@ -56,17 +54,16 @@ Fin du stream.
 {
   "event": "stop",
   "stop": {
-    "accountSid": "AC...",
     "callSid": "CA...",
     "streamSid": "MZ..."
   }
 }
 ```
 
-### Messages sortants (Serveur → Twilio)
+### Messages sortants (Serveur → Client)
 
 #### MEDIA
-Envoyer de l'audio vers Twilio.
+Envoyer de l'audio.
 
 ```json
 {
@@ -132,7 +129,7 @@ Vider le buffer audio.
    ↓
    - Encodage base64
    ↓
-   - Envoi MEDIA vers Twilio
+   - Envoi MEDIA
    ↓
 4. Réception STOP → Nettoyage
 ```
@@ -142,8 +139,7 @@ Vider le buffer audio.
 ### Client JavaScript
 
 ```javascript
-const callId = "call_123";
-const ws = new WebSocket(`ws://localhost:8000/ws/twilio/${callId}`);
+const ws = new WebSocket(`ws://localhost:8000/ws/voice`);
 
 ws.onopen = () => {
   console.log("WebSocket connecté");
@@ -154,19 +150,19 @@ ws.onmessage = (event) => {
   
   if (message.event === "media") {
     // Audio reçu depuis le serveur
-    // À envoyer à Twilio Media Streams
-    sendToTwilio(message);
+    // Traiter l'audio...
   }
 };
 
-// Envoyer un message START simulé
+// Envoyer un message START
 ws.send(JSON.stringify({
   event: "start",
   start: {
-    accountSid: "AC...",
     callSid: "CA...",
     streamSid: "MZ...",
-    tracks: ["inbound", "outbound"]
+    customParameters: {
+      From: "+1234567890"
+    }
   }
 }));
 
@@ -174,9 +170,6 @@ ws.send(JSON.stringify({
 ws.send(JSON.stringify({
   event: "media",
   media: {
-    track: "inbound",
-    chunk: "1",
-    timestamp: Date.now().toString(),
     payload: "base64_audio_data"
   }
 }));
@@ -189,18 +182,19 @@ import asyncio
 import websockets
 import json
 
-async def connect_websocket(call_id: str):
-    uri = f"ws://localhost:8000/ws/twilio/{call_id}"
+async def connect_websocket():
+    uri = "ws://localhost:8000/ws/voice"
     
     async with websockets.connect(uri) as websocket:
         # Envoyer START
         start_message = {
             "event": "start",
             "start": {
-                "accountSid": "AC...",
                 "callSid": "CA...",
                 "streamSid": "MZ...",
-                "tracks": ["inbound", "outbound"]
+                "customParameters": {
+                    "From": "+1234567890"
+                }
             }
         }
         await websocket.send(json.dumps(start_message))
@@ -224,7 +218,7 @@ Si la connexion échoue, le serveur retourne un message d'erreur :
 ```json
 {
   "error": "Connection failed",
-  "message": "Call ID not found"
+  "message": "Invalid request"
 }
 ```
 
@@ -240,7 +234,7 @@ Si aucune activité pendant 30 secondes, la connexion est fermée.
 
 ## Sécurité
 
-- **Authentification** : Vérification du call_id
+- **Authentification** : Vérification des paramètres d'appel
 - **Rate Limiting** : Limite de connexions par IP
 - **Validation** : Validation de tous les messages entrants
 

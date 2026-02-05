@@ -5,7 +5,7 @@
 # ========================================
 """Service de notifications Slack."""
 import httpx
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
 
 class SlackService:

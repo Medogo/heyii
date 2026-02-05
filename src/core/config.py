@@ -45,11 +45,12 @@ class Settings(BaseSettings):
     elevenlabs_api_key: str = Field(default="", alias="ELEVENLABS_API_KEY")
     elevenlabs_voice_id: str = Field(default="", alias="ELEVENLABS_VOICE_ID")
     elevenlabs_model: str = "eleven_turbo_v2_5"
-    
-    # Twilio
-    twilio_account_sid: str = Field(default="", alias="TWILIO_ACCOUNT_SID")
-    twilio_auth_token: str = Field(default="", alias="TWILIO_AUTH_TOKEN")
-    twilio_phone_number: str = Field(default="", alias="TWILIO_PHONE_NUMBER")
+
+    # Telnyx (remplace Twilio)
+    telnyx_api_key: str = Field(..., alias="TELNYX_API_KEY")
+    telnyx_phone_number: str = Field(..., alias="TELNYX_PHONE_NUMBER")
+    telnyx_connection_id: str = Field(..., alias="TELNYX_CONNECTION_ID")
+    telnyx_public_key: str = Field(default="", alias="TELNYX_PUBLIC_KEY")
     
     # Qdrant
     qdrant_host: str = "localhost"
